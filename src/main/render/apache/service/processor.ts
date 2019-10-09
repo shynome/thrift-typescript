@@ -46,7 +46,11 @@ import {
     collectInheritedMethods,
 } from '../../shared/service'
 
-import { createErrorType, createPromiseType, createAnyType } from '../../shared/types'
+import {
+    createAnyType,
+    createErrorType,
+    createPromiseType,
+} from '../../shared/types'
 
 function funcToMethodReducer(
     acc: Array<ts.MethodSignature>,
@@ -149,11 +153,13 @@ export function renderHandlerInterface(
                 undefined,
                 undefined,
                 COMMON_IDENTIFIERS.IHandler,
-                [ts.createTypeParameterDeclaration(
-                    COMMON_IDENTIFIERS.Context,
-                    undefined,
-                    createAnyType(),
-                )],
+                [
+                    ts.createTypeParameterDeclaration(
+                        COMMON_IDENTIFIERS.Context,
+                        undefined,
+                        createAnyType(),
+                    ),
+                ],
                 [],
                 signatures,
             ),
@@ -232,8 +238,11 @@ export function renderProcessor(
             createFunctionParameter(
                 COMMON_IDENTIFIERS.handler,
                 ts.createTypeReferenceNode(COMMON_IDENTIFIERS.IHandler, [
-                    ts.createTypeReferenceNode(COMMON_IDENTIFIERS.Context, undefined),
-                ])
+                    ts.createTypeReferenceNode(
+                        COMMON_IDENTIFIERS.Context,
+                        undefined,
+                    ),
+                ]),
             )),
         ],
         [
@@ -404,7 +413,7 @@ function createProcessFunctionMethod(
                                                                 },
                                                             ),
                                                             COMMON_IDENTIFIERS.context,
-                                                        ]
+                                                        ],
                                                     ),
                                                 ],
                                             ),
