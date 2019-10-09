@@ -306,35 +306,35 @@ export class Client extends SharedServiceBase.Client {
         }
     }
 }
-export interface ILocalHandler {
-    getUnion(index: number): SharedUnion.SharedUnion | Promise<SharedUnion.SharedUnion>;
-    getEnum(): SharedEnum.SharedEnum | Promise<SharedEnum.SharedEnum>;
+export interface ILocalHandler<Context = any> {
+    getUnion(index: number, context?: Context): SharedUnion.SharedUnion | Promise<SharedUnion.SharedUnion>;
+    getEnum(context?: Context): SharedEnum.SharedEnum | Promise<SharedEnum.SharedEnum>;
 }
-export type IHandler = ILocalHandler & SharedServiceBase.IHandler;
-export class Processor extends SharedServiceBase.Processor {
-    public _handler: IHandler;
-    constructor(handler: IHandler) {
+export type IHandler<Context = any> = ILocalHandler<Context> & SharedServiceBase.IHandler<Context>;
+export class Processor<Context = any> extends SharedServiceBase.Processor<Context> {
+    public _handler: IHandler<Context>;
+    constructor(handler: IHandler<Context>) {
         super({
             getStruct: handler.getStruct
         });
         this._handler = handler;
     }
-    public process(input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process(input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         const metadata: thrift.TMessage = input.readMessageBegin();
         const fname: string = metadata.fname;
         const requestId: number = metadata.rseqid;
         const methodName: string = "process_" + fname;
         switch (methodName) {
             case "process_getStruct": {
-                this.process_getStruct(requestId, input, output);
+                this.process_getStruct(requestId, input, output, context);
                 return;
             }
             case "process_getUnion": {
-                this.process_getUnion(requestId, input, output);
+                this.process_getUnion(requestId, input, output, context);
                 return;
             }
             case "process_getEnum": {
-                this.process_getEnum(requestId, input, output);
+                this.process_getEnum(requestId, input, output, context);
                 return;
             }
             default: {
@@ -350,12 +350,12 @@ export class Processor extends SharedServiceBase.Processor {
             }
         }
     }
-    public process_getUnion(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_getUnion(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<SharedUnion.SharedUnion>((resolve, reject): void => {
             try {
                 const args: GetUnionArgs = GetUnionArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.getUnion(args.index));
+                resolve(this._handler.getUnion(args.index, context));
             }
             catch (err) {
                 reject(err);
@@ -376,11 +376,11 @@ export class Processor extends SharedServiceBase.Processor {
             return;
         });
     }
-    public process_getEnum(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_getEnum(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<SharedEnum.SharedEnum>((resolve, reject): void => {
             try {
                 input.readMessageEnd();
-                resolve(this._handler.getEnum());
+                resolve(this._handler.getEnum(context));
             }
             catch (err) {
                 reject(err);

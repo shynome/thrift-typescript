@@ -2467,27 +2467,27 @@ export class Client extends __ROOT_NAMESPACE__.SharedService.Client {
         }
     }
 }
-export interface ILocalHandler {
-    ping(): void | Promise<void>;
-    add(num1: number, num2: number): number | Promise<number>;
-    addInt64(num1: Int64, num2: Int64): Int64 | Promise<Int64>;
-    addWithContext(num1: number, num2: number): number | Promise<number>;
-    calculate(logid: number, work: Work.Work): number | Promise<number>;
-    echoBinary(word: Buffer): string | Promise<string>;
-    echoString(word: string): string | Promise<string>;
-    checkName(choice: Choice.Choice): string | Promise<string>;
-    checkOptional(type?: string): string | Promise<string>;
-    mapOneList(arg: Array<number>): Array<number> | Promise<Array<number>>;
-    mapValues(arg: Map<string, number>): Array<number> | Promise<Array<number>>;
-    listToMap(arg: Array<Array<string>>): Map<string, string> | Promise<Map<string, string>>;
-    fetchThing(): com_test_common.CommonStruct | Promise<com_test_common.CommonStruct>;
-    fetchMap(): TypedMap.TypedMap | Promise<TypedMap.TypedMap>;
-    zip(): void | Promise<void>;
+export interface ILocalHandler<Context = any> {
+    ping(context?: Context): void | Promise<void>;
+    add(num1: number, num2: number, context?: Context): number | Promise<number>;
+    addInt64(num1: Int64, num2: Int64, context?: Context): Int64 | Promise<Int64>;
+    addWithContext(num1: number, num2: number, context?: Context): number | Promise<number>;
+    calculate(logid: number, work: Work.Work, context?: Context): number | Promise<number>;
+    echoBinary(word: Buffer, context?: Context): string | Promise<string>;
+    echoString(word: string, context?: Context): string | Promise<string>;
+    checkName(choice: Choice.Choice, context?: Context): string | Promise<string>;
+    checkOptional(type?: string, context?: Context): string | Promise<string>;
+    mapOneList(arg: Array<number>, context?: Context): Array<number> | Promise<Array<number>>;
+    mapValues(arg: Map<string, number>, context?: Context): Array<number> | Promise<Array<number>>;
+    listToMap(arg: Array<Array<string>>, context?: Context): Map<string, string> | Promise<Map<string, string>>;
+    fetchThing(context?: Context): com_test_common.CommonStruct | Promise<com_test_common.CommonStruct>;
+    fetchMap(context?: Context): TypedMap.TypedMap | Promise<TypedMap.TypedMap>;
+    zip(context?: Context): void | Promise<void>;
 }
-export type IHandler = ILocalHandler & __ROOT_NAMESPACE__.SharedService.IHandler;
-export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
-    public _handler: IHandler;
-    constructor(handler: IHandler) {
+export type IHandler<Context = any> = ILocalHandler<Context> & __ROOT_NAMESPACE__.SharedService.IHandler<Context>;
+export class Processor<Context = any> extends __ROOT_NAMESPACE__.SharedService.Processor<Context> {
+    public _handler: IHandler<Context>;
+    constructor(handler: IHandler<Context>) {
         super({
             getUnion: handler.getUnion,
             getEnum: handler.getEnum,
@@ -2495,82 +2495,82 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
         });
         this._handler = handler;
     }
-    public process(input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process(input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         const metadata: thrift.TMessage = input.readMessageBegin();
         const fname: string = metadata.fname;
         const requestId: number = metadata.rseqid;
         const methodName: string = "process_" + fname;
         switch (methodName) {
             case "process_getUnion": {
-                this.process_getUnion(requestId, input, output);
+                this.process_getUnion(requestId, input, output, context);
                 return;
             }
             case "process_getEnum": {
-                this.process_getEnum(requestId, input, output);
+                this.process_getEnum(requestId, input, output, context);
                 return;
             }
             case "process_getStruct": {
-                this.process_getStruct(requestId, input, output);
+                this.process_getStruct(requestId, input, output, context);
                 return;
             }
             case "process_ping": {
-                this.process_ping(requestId, input, output);
+                this.process_ping(requestId, input, output, context);
                 return;
             }
             case "process_add": {
-                this.process_add(requestId, input, output);
+                this.process_add(requestId, input, output, context);
                 return;
             }
             case "process_addInt64": {
-                this.process_addInt64(requestId, input, output);
+                this.process_addInt64(requestId, input, output, context);
                 return;
             }
             case "process_addWithContext": {
-                this.process_addWithContext(requestId, input, output);
+                this.process_addWithContext(requestId, input, output, context);
                 return;
             }
             case "process_calculate": {
-                this.process_calculate(requestId, input, output);
+                this.process_calculate(requestId, input, output, context);
                 return;
             }
             case "process_echoBinary": {
-                this.process_echoBinary(requestId, input, output);
+                this.process_echoBinary(requestId, input, output, context);
                 return;
             }
             case "process_echoString": {
-                this.process_echoString(requestId, input, output);
+                this.process_echoString(requestId, input, output, context);
                 return;
             }
             case "process_checkName": {
-                this.process_checkName(requestId, input, output);
+                this.process_checkName(requestId, input, output, context);
                 return;
             }
             case "process_checkOptional": {
-                this.process_checkOptional(requestId, input, output);
+                this.process_checkOptional(requestId, input, output, context);
                 return;
             }
             case "process_mapOneList": {
-                this.process_mapOneList(requestId, input, output);
+                this.process_mapOneList(requestId, input, output, context);
                 return;
             }
             case "process_mapValues": {
-                this.process_mapValues(requestId, input, output);
+                this.process_mapValues(requestId, input, output, context);
                 return;
             }
             case "process_listToMap": {
-                this.process_listToMap(requestId, input, output);
+                this.process_listToMap(requestId, input, output, context);
                 return;
             }
             case "process_fetchThing": {
-                this.process_fetchThing(requestId, input, output);
+                this.process_fetchThing(requestId, input, output, context);
                 return;
             }
             case "process_fetchMap": {
-                this.process_fetchMap(requestId, input, output);
+                this.process_fetchMap(requestId, input, output, context);
                 return;
             }
             case "process_zip": {
-                this.process_zip(requestId, input, output);
+                this.process_zip(requestId, input, output, context);
                 return;
             }
             default: {
@@ -2586,11 +2586,11 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             }
         }
     }
-    public process_ping(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_ping(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<void>((resolve, reject): void => {
             try {
                 input.readMessageEnd();
-                resolve(this._handler.ping());
+                resolve(this._handler.ping(context));
             }
             catch (err) {
                 reject(err);
@@ -2611,12 +2611,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_add(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_add(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<number>((resolve, reject): void => {
             try {
                 const args: AddArgs = AddArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.add(args.num1, args.num2));
+                resolve(this._handler.add(args.num1, args.num2, context));
             }
             catch (err) {
                 reject(err);
@@ -2647,12 +2647,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             }
         });
     }
-    public process_addInt64(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_addInt64(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<Int64>((resolve, reject): void => {
             try {
                 const args: AddInt64Args = AddInt64Args.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.addInt64(args.num1, args.num2));
+                resolve(this._handler.addInt64(args.num1, args.num2, context));
             }
             catch (err) {
                 reject(err);
@@ -2683,12 +2683,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             }
         });
     }
-    public process_addWithContext(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_addWithContext(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<number>((resolve, reject): void => {
             try {
                 const args: AddWithContextArgs = AddWithContextArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.addWithContext(args.num1, args.num2));
+                resolve(this._handler.addWithContext(args.num1, args.num2, context));
             }
             catch (err) {
                 reject(err);
@@ -2709,12 +2709,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_calculate(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_calculate(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<number>((resolve, reject): void => {
             try {
                 const args: CalculateArgs = CalculateArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.calculate(args.logid, args.work));
+                resolve(this._handler.calculate(args.logid, args.work, context));
             }
             catch (err) {
                 reject(err);
@@ -2745,12 +2745,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             }
         });
     }
-    public process_echoBinary(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_echoBinary(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<string>((resolve, reject): void => {
             try {
                 const args: EchoBinaryArgs = EchoBinaryArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.echoBinary(args.word));
+                resolve(this._handler.echoBinary(args.word, context));
             }
             catch (err) {
                 reject(err);
@@ -2771,12 +2771,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_echoString(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_echoString(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<string>((resolve, reject): void => {
             try {
                 const args: EchoStringArgs = EchoStringArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.echoString(args.word));
+                resolve(this._handler.echoString(args.word, context));
             }
             catch (err) {
                 reject(err);
@@ -2797,12 +2797,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_checkName(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_checkName(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<string>((resolve, reject): void => {
             try {
                 const args: CheckNameArgs = CheckNameArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.checkName(args.choice));
+                resolve(this._handler.checkName(args.choice, context));
             }
             catch (err) {
                 reject(err);
@@ -2823,12 +2823,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_checkOptional(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_checkOptional(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<string>((resolve, reject): void => {
             try {
                 const args: CheckOptionalArgs = CheckOptionalArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.checkOptional(args.type));
+                resolve(this._handler.checkOptional(args.type, context));
             }
             catch (err) {
                 reject(err);
@@ -2849,12 +2849,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_mapOneList(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_mapOneList(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<Array<number>>((resolve, reject): void => {
             try {
                 const args: MapOneListArgs = MapOneListArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.mapOneList(args.arg));
+                resolve(this._handler.mapOneList(args.arg, context));
             }
             catch (err) {
                 reject(err);
@@ -2875,12 +2875,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_mapValues(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_mapValues(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<Array<number>>((resolve, reject): void => {
             try {
                 const args: MapValuesArgs = MapValuesArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.mapValues(args.arg));
+                resolve(this._handler.mapValues(args.arg, context));
             }
             catch (err) {
                 reject(err);
@@ -2901,12 +2901,12 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_listToMap(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_listToMap(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<Map<string, string>>((resolve, reject): void => {
             try {
                 const args: ListToMapArgs = ListToMapArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.listToMap(args.arg));
+                resolve(this._handler.listToMap(args.arg, context));
             }
             catch (err) {
                 reject(err);
@@ -2927,11 +2927,11 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_fetchThing(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_fetchThing(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<com_test_common.CommonStruct>((resolve, reject): void => {
             try {
                 input.readMessageEnd();
-                resolve(this._handler.fetchThing());
+                resolve(this._handler.fetchThing(context));
             }
             catch (err) {
                 reject(err);
@@ -2952,11 +2952,11 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_fetchMap(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_fetchMap(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<TypedMap.TypedMap>((resolve, reject): void => {
             try {
                 input.readMessageEnd();
-                resolve(this._handler.fetchMap());
+                resolve(this._handler.fetchMap(context));
             }
             catch (err) {
                 reject(err);
@@ -2977,11 +2977,11 @@ export class Processor extends __ROOT_NAMESPACE__.SharedService.Processor {
             return;
         });
     }
-    public process_zip(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_zip(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<void>((resolve, reject): void => {
             try {
                 input.readMessageEnd();
-                resolve(this._handler.zip());
+                resolve(this._handler.zip(context));
             }
             catch (err) {
                 reject(err);

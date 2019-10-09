@@ -177,22 +177,22 @@ export class Client {
         }
     }
 }
-export interface IHandler {
-    getStruct(key: number): SharedStruct.SharedStruct | Promise<SharedStruct.SharedStruct>;
+export interface IHandler<Context = any> {
+    getStruct(key: number, context?: Context): SharedStruct.SharedStruct | Promise<SharedStruct.SharedStruct>;
 }
-export class Processor {
-    public _handler: IHandler;
-    constructor(handler: IHandler) {
+export class Processor<Context = any> {
+    public _handler: IHandler<Context>;
+    constructor(handler: IHandler<Context>) {
         this._handler = handler;
     }
-    public process(input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process(input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         const metadata: thrift.TMessage = input.readMessageBegin();
         const fname: string = metadata.fname;
         const requestId: number = metadata.rseqid;
         const methodName: string = "process_" + fname;
         switch (methodName) {
             case "process_getStruct": {
-                this.process_getStruct(requestId, input, output);
+                this.process_getStruct(requestId, input, output, context);
                 return;
             }
             default: {
@@ -208,12 +208,12 @@ export class Processor {
             }
         }
     }
-    public process_getStruct(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol): void {
+    public process_getStruct(requestId: number, input: thrift.TProtocol, output: thrift.TProtocol, context: Context): void {
         new Promise<SharedStruct.SharedStruct>((resolve, reject): void => {
             try {
                 const args: GetStructArgs = GetStructArgs.read(input);
                 input.readMessageEnd();
-                resolve(this._handler.getStruct(args.key));
+                resolve(this._handler.getStruct(args.key, context));
             }
             catch (err) {
                 reject(err);
