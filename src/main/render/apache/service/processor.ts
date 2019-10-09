@@ -151,7 +151,7 @@ export function renderHandlerInterface(
         return [
             ts.createInterfaceDeclaration(
                 undefined,
-                undefined,
+                [ts.createToken(ts.SyntaxKind.ExportKeyword)],
                 COMMON_IDENTIFIERS.IHandler,
                 [
                     ts.createTypeParameterDeclaration(
