@@ -128,11 +128,17 @@ export function renderHandlerInterface(
                 undefined,
                 [ts.createToken(ts.SyntaxKind.ExportKeyword)],
                 COMMON_IDENTIFIERS.IHandler,
-                undefined,
+                [
+                    ts.createTypeParameterDeclaration(
+                        COMMON_IDENTIFIERS.Context,
+                        undefined,
+                        createAnyType(),
+                    ),
+                ],
                 ts.createIntersectionTypeNode([
                     ts.createTypeReferenceNode(
                         COMMON_IDENTIFIERS.ILocalHandler,
-                        undefined,
+                        [ContextType],
                     ),
                     ts.createTypeReferenceNode(
                         ts.createIdentifier(
@@ -147,7 +153,7 @@ export function renderHandlerInterface(
                                         namespaceMap: state.project.namespaces,
                                     },
                                 ).fullName
-                            }.IHandler`,
+                            }.IHandler<Context>`,
                         ),
                         undefined,
                     ),
