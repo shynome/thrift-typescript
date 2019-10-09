@@ -73,6 +73,7 @@ function funcToMethodReducer(
                     COMMON_IDENTIFIERS.context,
                     ContextType,
                     undefined,
+                    true,
                 ),
             ],
             ts.createUnionTypeNode([
