@@ -299,7 +299,8 @@ export function renderProcessor(
                                       ).fullName
                                   }`,
                               ),
-                              COMMON_IDENTIFIERS.Processor,
+                            //   COMMON_IDENTIFIERS.Processor,
+                            ts.createIdentifier('Processor<Context>'),
                           ),
                       ),
                   ]),
