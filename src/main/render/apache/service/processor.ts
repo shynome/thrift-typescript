@@ -113,7 +113,13 @@ export function renderHandlerInterface(
                 undefined,
                 [ts.createToken(ts.SyntaxKind.ExportKeyword)],
                 COMMON_IDENTIFIERS.ILocalHandler,
-                undefined,
+                [
+                    ts.createTypeParameterDeclaration(
+                        COMMON_IDENTIFIERS.Context,
+                        undefined,
+                        createAnyType(),
+                    ),
+                ],
                 [],
                 signatures,
             ),
