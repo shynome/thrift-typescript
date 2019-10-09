@@ -5,10 +5,15 @@ import { createNumberType, createVoidType } from '../types'
 import { createFunctionParameter } from '../utils'
 
 import { createErrorType, createUndefinedType } from '../../shared/types'
-import { THRIFT_IDENTIFIERS } from '../identifiers'
+import { COMMON_IDENTIFIERS, THRIFT_IDENTIFIERS } from '../identifiers'
 
 export const TProtocolType: ts.TypeNode = ts.createTypeReferenceNode(
     THRIFT_IDENTIFIERS.TProtocol,
+    undefined,
+)
+
+export const ContextType: ts.TypeNode = ts.createTypeReferenceNode(
+    COMMON_IDENTIFIERS.Context,
     undefined,
 )
 

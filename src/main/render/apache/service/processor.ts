@@ -6,7 +6,7 @@ import {
     ServiceDefinition,
 } from '@creditkarma/thrift-parser'
 
-import { TProtocolType } from './types'
+import { ContextType, TProtocolType } from './types'
 
 import { createStructArgsName, createStructResultName } from './utils'
 
@@ -46,7 +46,7 @@ import {
     collectInheritedMethods,
 } from '../../shared/service'
 
-import { createErrorType, createPromiseType } from '../../shared/types'
+import { createErrorType, createPromiseType, createAnyType } from '../../shared/types'
 
 function funcToMethodReducer(
     acc: Array<ts.MethodSignature>,
@@ -65,6 +65,11 @@ function funcToMethodReducer(
                         field.requiredness === 'optional',
                     )
                 }),
+                createFunctionParameter(
+                    COMMON_IDENTIFIERS.context,
+                    ContextType,
+                    undefined,
+                ),
             ],
             ts.createUnionTypeNode([
                 typeNodeForFieldType(func.returnType, state),
@@ -142,9 +147,13 @@ export function renderHandlerInterface(
         return [
             ts.createInterfaceDeclaration(
                 undefined,
-                [ts.createToken(ts.SyntaxKind.ExportKeyword)],
-                COMMON_IDENTIFIERS.IHandler,
                 undefined,
+                COMMON_IDENTIFIERS.IHandler,
+                [ts.createTypeParameterDeclaration(
+                    COMMON_IDENTIFIERS.Context,
+                    undefined,
+                    createAnyType(),
+                )],
                 [],
                 signatures,
             ),
@@ -208,16 +217,24 @@ export function renderProcessor(
         [ts.createToken(ts.SyntaxKind.PublicKeyword)],
         COMMON_IDENTIFIERS._handler,
         undefined,
-        handlerType(node),
+        ts.createTypeReferenceNode(COMMON_IDENTIFIERS.IHandler, [
+            ts.createTypeReferenceNode(COMMON_IDENTIFIERS.Context, undefined),
+        ]),
         undefined,
     )
 
     const ctor: ts.ConstructorDeclaration = createClassConstructor(
         [
-            createFunctionParameter(
+            (createFunctionParameter(
                 COMMON_IDENTIFIERS.handler,
                 handlerType(node),
             ),
+            createFunctionParameter(
+                COMMON_IDENTIFIERS.handler,
+                ts.createTypeReferenceNode(COMMON_IDENTIFIERS.IHandler, [
+                    ts.createTypeReferenceNode(COMMON_IDENTIFIERS.Context, undefined),
+                ])
+            )),
         ],
         [
             ...createSuperCall(node, state),
@@ -272,7 +289,13 @@ export function renderProcessor(
         undefined, // decorators
         [ts.createToken(ts.SyntaxKind.ExportKeyword)], // modifiers
         COMMON_IDENTIFIERS.Processor, // name
-        undefined, // type parameters
+        [
+            ts.createTypeParameterDeclaration(
+                'Context',
+                undefined,
+                createAnyType(),
+            ),
+        ], // type parameters
         heritage, // heritage
         [handler, ctor, processMethod, ...processFunctions], // body
     )
@@ -329,6 +352,11 @@ function createProcessFunctionMethod(
             ),
             createFunctionParameter(COMMON_IDENTIFIERS.input, TProtocolType),
             createFunctionParameter(COMMON_IDENTIFIERS.output, TProtocolType),
+            createFunctionParameter(
+                COMMON_IDENTIFIERS.context,
+                ContextType,
+                undefined,
+            ),
         ], // parameters
         createVoidType(), // return type
         [
@@ -365,15 +393,18 @@ function createProcessFunctionMethod(
                                                             COMMON_IDENTIFIERS._handler,
                                                         ),
                                                         funcDef.name.value,
-                                                        funcDef.fields.map(
-                                                            (
-                                                                next: FieldDefinition,
-                                                            ) => {
-                                                                return ts.createIdentifier(
-                                                                    `args.${next.name.value}`,
-                                                                )
-                                                            },
-                                                        ),
+                                                        [
+                                                            ...funcDef.fields.map(
+                                                                (
+                                                                    next: FieldDefinition,
+                                                                ) => {
+                                                                    return ts.createIdentifier(
+                                                                        `args.${next.name.value}`,
+                                                                    )
+                                                                },
+                                                            ),
+                                                            COMMON_IDENTIFIERS.context,
+                                                        ]
                                                     ),
                                                 ],
                                             ),
@@ -773,6 +804,11 @@ function createProcessMethod(
         [
             createFunctionParameter(COMMON_IDENTIFIERS.input, TProtocolType),
             createFunctionParameter(COMMON_IDENTIFIERS.output, TProtocolType),
+            createFunctionParameter(
+                COMMON_IDENTIFIERS.context,
+                ContextType,
+                undefined,
+            ),
         ], // parameters
         createVoidType(), // return type
         [
@@ -831,6 +867,7 @@ function createMethodCallForFunction(func: FunctionDefinition): ts.CaseClause {
                             COMMON_IDENTIFIERS.requestId,
                             COMMON_IDENTIFIERS.input,
                             COMMON_IDENTIFIERS.output,
+                            COMMON_IDENTIFIERS.context,
                         ],
                     ),
                 ),
