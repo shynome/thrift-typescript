@@ -61,6 +61,11 @@ function funcToMethodReducer(
         ts.createMethodSignature(
             undefined,
             [
+                createFunctionParameter(
+                    COMMON_IDENTIFIERS.context,
+                    ContextType,
+                    undefined,
+                ),
                 ...func.fields.map((field: FieldDefinition) => {
                     return createFunctionParameter(
                         field.name.value,
@@ -69,12 +74,6 @@ function funcToMethodReducer(
                         field.requiredness === 'optional',
                     )
                 }),
-                createFunctionParameter(
-                    COMMON_IDENTIFIERS.context,
-                    ContextType,
-                    undefined,
-                    true,
-                ),
             ],
             ts.createUnionTypeNode([
                 typeNodeForFieldType(func.returnType, state),
@@ -417,6 +416,7 @@ function createProcessFunctionMethod(
                                                         ),
                                                         funcDef.name.value,
                                                         [
+                                                            COMMON_IDENTIFIERS.context,
                                                             ...funcDef.fields.map(
                                                                 (
                                                                     next: FieldDefinition,
@@ -426,7 +426,6 @@ function createProcessFunctionMethod(
                                                                     )
                                                                 },
                                                             ),
-                                                            COMMON_IDENTIFIERS.context,
                                                         ],
                                                     ),
                                                 ],
